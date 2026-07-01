@@ -8,6 +8,42 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <!-- Formspree handles email delivery -->
 <style>
+  /* Video background wrapper to keep it behind content with transparency */
+.hero-video-bg-wrap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  z-index: 1; /* Keeps video behind your 3D cards and text */
+  overflow: hidden;
+  opacity: 0.35; /* Transparency: 0.35 means 35% visible so text stays clear */
+  pointer-events: none; /* Prevents users from clicking/pausing the video */
+}
+
+.hero-video-bg-wrap div {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+  height: 0;
+  width: 100%;
+}
+
+.hero-video-bg-wrap iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  transform: scale(1.3); /* Slight zoom to hide YouTube black bars */
+}
+
+/* Ensuring other elements stay on top of the video */
+.hero-left, .hero-right, .h-scr {
+  position: relative;
+  z-index: 2;
+}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
   --bg:#F8F7F4;
@@ -570,6 +606,17 @@ footer{border-top:1px solid var(--border);background:var(--black);padding:32px 6
 
 <!-- HERO -->
 <section id="hero">
+  <!-- Background Video Block -->
+<div class="hero-video-bg-wrap">
+  <div>
+    <iframe 
+      src="https://www.youtube.com/embed/I0fy-n41u0Y?autoplay=1&mute=1&loop=1&playlist=I0fy-n41u0Y&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1" 
+      frameborder="0" 
+      allow="autoplay; encrypted-media" 
+      allowfullscreen>
+    </iframe>
+  </div>
+</div>
   <div class="hero-left">
     <div class="h-badge"><span class="h-dot"></span>AI Advertising Studio — International</div>
     <h1 class="h-ttl">Next-Gen<br>aesthetics  for<br><span class="irid">DIGI-Scale</span></h1>
