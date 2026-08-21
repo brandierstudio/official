@@ -869,6 +869,7 @@ footer{border-top:1px solid var(--border);background:var(--black);padding:32px 6
       <form class="cf" id="cf">
         <input type="hidden" name="_subject" value="New Project Inquiry — Brandier Studio"/>
         <input type="hidden" name="_next" value=""/>
+        <div class="fg"><label class="fl">Selected Package</label><input class="fi" id="selected-package" name="selected_package" type="text" placeholder="Select a package from Pricing" readonly/></div>
         <div class="fg"><label class="fl">Your Name</label><input class="fi" name="name" type="text" placeholder="John Smith" required/></div>
         <div class="fg"><label class="fl">Email Address</label><input class="fi" name="email" type="email" placeholder="john@company.com" required/></div>
         <div class="fg"><label class="fl">Ad Format Needed</label><input class="fi" name="ad_format" type="text" placeholder="UGC / TV Spot / Unboxing / Wild Card..."/></div>
@@ -923,6 +924,17 @@ const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.ta
 document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
 
 /* ─── FORM — Formspree direct to Gmail ─── */
+  const pricingParams=new URLSearchParams(window.location.search);
+const selectedPackage=pricingParams.get('package');
+const selectedPrice=pricingParams.get('price');
+const selectedMode=pricingParams.get('mode');
+
+if(selectedPackage){
+  const packageField=document.getElementById('selected-package');
+  if(packageField){
+    packageField.value=selectedPackage+(selectedPrice&&selectedPrice!=='0'?` — $${Number(selectedPrice).toLocaleString()}${selectedMode==='retainer'?' / month':''}`:' — Custom');
+  }
+}
 document.getElementById('cf').addEventListener('submit',async function(e){
   e.preventDefault();
   const btn=document.getElementById('fsub');
