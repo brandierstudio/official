@@ -39,191 +39,320 @@
     <section class="footer-cta"><h2>Not sure where<br>to <em>start?</em></h2><p>Tell us what you’re building and we’ll recommend the right production path.</p><a class="contact" id="contact-link" href="index.html#contact">Start a project</a></section>
   </main><footer><span>© 2025 Brandier AI Studio</span><span>Crafted for brands that want to move differently</span></footer>
 <script>
-const prices={WELCOME10:10,BRANDIER15:15,SPECIAL20:20};
-let choice={name:'Growth',price:349};
-let discount=0;
-let appliedCode='';
+const prices = {
+  WELCOME10: 10,
+  BRANDIER15: 15,
+  SPECIAL20: 20
+};
 
-const money=n=>n?`$${Number(n).toLocaleString()}`:'Custom';
-const selection=document.getElementById('selection');
-const message=document.getElementById('code-message');
-const contactLink=document.getElementById('contact-link');
+let choice = null;
+let discount = 0;
+let appliedCode = '';
+
+const money = n => n ? `$${Number(n).toLocaleString()}` : 'Custom';
+
+const selection = document.getElementById('selection');
+const message = document.getElementById('code-message');
+const contactLink = document.getElementById('contact-link');
+const discountTitle = document.getElementById('discount-title');
 
 function getMode(){
   return document.querySelector('.switcher .active').dataset.mode;
 }
 
-function getFinalPrice(){
-  return choice.price ? Math.round(choice.price*(1-discount/100)) : 0;
+function getBasePrice(){
+  return choice ? choice.price : 0;
 }
 
-function refresh(){
-  const mode=getMode();
-  const final=getFinalPrice();
+function getFinalPrice(){
+  return getBasePrice()
+    ? Math.round(getBasePrice() * (1 - discount / 100))
+    : 0;
+}
 
-  /* Update every card back to its normal price first */
-  document.querySelectorAll('.plan').forEach(plan=>{
-    const base=+plan.dataset[mode]||0;
-    const amount=plan.querySelector('.amount');
-    const suffix=plan.querySelector('.suffix');
+function updateDiscountSection(){
+  if(!choice){
+    discountTitle.textContent = 'Select a package to unlock client pricing';
+    selection.innerHTML =
+      'Choose Starter, Growth, Pro, or Studio above to continue.';
+    return;
+  }
+
+  discountTitle.textContent =
+    `${choice.name} selected — Have a code?`;
+
+  const base = getBasePrice();
+  const final = getFinalPrice();
+
+  selection.innerHTML =
+    `Selected package: <strong>${choice.name}</strong>`;
+
+  if(base){
+    selection.innerHTML += ` · ${money(base)}`;
+
+    if(discount){
+      selection.innerHTML +=
+        ` → <strong>${money(final)}</strong> (${discount}% off)`;
+    }
+  }else{
+    selection.innerHTML += ' · Custom scope';
+  }
+
+  selection.innerHTML +=
+    ` · Your final project scope is confirmed before production.`;
+}
+
+function updateCards(){
+  const mode = getMode();
+
+  document.querySelectorAll('.plan').forEach(plan => {
+    const base = Number(plan.dataset[mode]) || 0;
+    const amount = plan.querySelector('.amount');
+    const suffix = plan.querySelector('.suffix');
 
     if(amount){
-      amount.textContent=base?money(base):'Let’s talk';
+      amount.textContent = base ? money(base) : 'Let’s talk';
     }
 
     if(suffix){
-      suffix.textContent=base
-        ? (mode==='project'?'starting at':'per month')
+      suffix.textContent = base
+        ? (mode === 'project' ? 'starting at' : 'per month')
         : '';
     }
   });
 
-  /* Apply discount only to the currently selected package */
-  const selectedPlan=[...document.querySelectorAll('.plan')]
-    .find(plan=>plan.dataset.name===choice.name);
+  if(choice && discount && choice.price){
+    const selectedPlan = [...document.querySelectorAll('.plan')]
+      .find(plan => plan.dataset.name === choice.name);
 
-  if(selectedPlan && choice.price && discount){
-    const amount=selectedPlan.querySelector('.amount');
-    const suffix=selectedPlan.querySelector('.suffix');
+    if(selectedPlan){
+      const amount = selectedPlan.querySelector('.amount');
+      const suffix = selectedPlan.querySelector('.suffix');
 
-    if(amount){
-      amount.textContent=money(final);
-    }
+      if(amount){
+        amount.textContent = money(getFinalPrice());
+      }
 
-    if(suffix){
-      suffix.textContent=mode==='project'?'after discount':'per month after discount';
+      if(suffix){
+        suffix.textContent =
+          getMode() === 'project'
+            ? 'after discount'
+            : 'per month after discount';
+      }
     }
   }
+}
 
-  /* Update the package summary */
-  selection.innerHTML=
-    `Selected package: <strong>${choice.name}</strong>`;
+function updateContactLink(){
+  const mode = getMode();
 
-  if(choice.price){
-    selection.innerHTML+=
-      ` · ${money(choice.price)}`;
-
-    if(discount){
-      selection.innerHTML+=
-        ` → <strong>${money(final)}</strong> (${discount}% off)`;
-    }
-  }else{
-    selection.innerHTML+=' · Custom scope';
+  if(!choice){
+    contactLink.href = 'index.html#contact';
+    return;
   }
 
-  selection.innerHTML+=
-    ` · Your final project scope is confirmed before production.`;
+  const final = getFinalPrice();
 
-  /* Make the bottom Start a Project button carry everything to contact */
-  const params=new URLSearchParams({
-    package:choice.name,
-    basePrice:String(choice.price||0),
-    price:String(final||0),
-    mode:mode,
-    discount:String(discount||0),
-    code:appliedCode
+  const params = new URLSearchParams({
+    package: choice.name,
+    basePrice: String(choice.price || 0),
+    price: String(final || 0),
+    mode: mode,
+    discount: String(discount || 0),
+    code: appliedCode
   });
 
-  contactLink.href=`index.html?${params.toString()}#contact`;
+  contactLink.href =
+    `index.html?${params.toString()}#contact`;
+}
+
+function refresh(){
+  updateCards();
+  updateDiscountSection();
+  updateContactLink();
 }
 
 
-/* MONTHLY / PER PROJECT */
-document.querySelectorAll('.switcher button').forEach(button=>{
-  button.addEventListener('click',()=>{
-    document.querySelector('.switcher .active').classList.remove('active');
+/* --------------------------------
+   PER PROJECT / MONTHLY RETAINER
+-------------------------------- */
+
+document.querySelectorAll('.switcher button').forEach(button => {
+  button.addEventListener('click', () => {
+
+    document.querySelector('.switcher .active')
+      .classList.remove('active');
+
     button.classList.add('active');
 
-    const key=button.dataset.mode;
+    const mode = button.dataset.mode;
 
-    document.querySelectorAll('.plan').forEach(plan=>{
-      const amount=+plan.dataset[key];
-
-      if(plan.dataset.name===choice.name){
-        choice.price=amount;
-      }
-    });
+    if(choice){
+      choice.price =
+        Number(
+          [...document.querySelectorAll('.plan')]
+            .find(plan => plan.dataset.name === choice.name)
+            ?.dataset[mode]
+        ) || 0;
+    }
 
     refresh();
   });
 });
 
 
-/* SELECT PACKAGE */
-document.querySelectorAll('.select').forEach(button=>{
-  button.addEventListener('click',()=>{
-    const plan=button.closest('.plan');
-    const mode=getMode();
+/* --------------------------------
+   CARD CLICK
+   Clicking the CARD selects it.
+   It does NOT open contact.
+-------------------------------- */
 
-    choice={
-      name:plan.dataset.name,
-      price:+plan.dataset[mode]
+document.querySelectorAll('.plan').forEach(plan => {
+
+  plan.addEventListener('click', event => {
+
+    /* If CTA button was clicked,
+       don't run card selection. */
+    if(event.target.closest('.select')){
+      return;
+    }
+
+    const mode = getMode();
+
+    choice = {
+      name: plan.dataset.name,
+      price: Number(plan.dataset[mode]) || 0
     };
 
+    discount = 0;
+    appliedCode = '';
+
+    document.getElementById('code').value = '';
+
+    message.textContent = '';
+    message.className = 'code-message';
+
     refresh();
 
-    /* Take the client to the promo-code area */
     document.querySelector('.discount').scrollIntoView({
-      behavior:'smooth',
-      block:'center'
+      behavior: 'smooth',
+      block: 'center'
     });
-
-    document.getElementById('code').focus();
   });
+
 });
 
 
-/* PROMO CODE */
-document.getElementById('code-form').addEventListener('submit',event=>{
+/* --------------------------------
+   SELECT BUTTON
+   Normal CTA = DIRECT CONTACT
+-------------------------------- */
+
+document.querySelectorAll('.select').forEach(button => {
+
+  button.addEventListener('click', event => {
+
+    event.stopPropagation();
+
+    const plan = button.closest('.plan');
+    const mode = getMode();
+
+    choice = {
+      name: plan.dataset.name,
+      price: Number(plan.dataset[mode]) || 0
+    };
+
+    /*
+      IMPORTANT:
+      Selecting a package normally does NOT require
+      a discount code.
+    */
+
+    discount = 0;
+    appliedCode = '';
+
+    updateContactLink();
+
+    window.location.href = contactLink.href;
+  });
+
+});
+
+
+/* --------------------------------
+   PROMO CODE
+-------------------------------- */
+
+document.getElementById('code-form').addEventListener('submit', event => {
+
   event.preventDefault();
 
-  const code=document.getElementById('code')
+  if(!choice){
+    message.textContent =
+      'Please select a package first.';
+    message.className =
+      'code-message error';
+    return;
+  }
+
+  const code = document.getElementById('code')
     .value
     .trim()
     .toUpperCase();
 
   if(!code){
-    discount=0;
-    appliedCode='';
-    message.textContent='No discount code applied. You can start your project normally.';
-    message.className='code-message error';
-  }
 
-  else if(prices[code] && choice.price){
-    discount=prices[code];
-    appliedCode=code;
+    discount = 0;
+    appliedCode = '';
 
-    message.textContent=
+    message.textContent =
+      `No discount code applied. ${choice.name} stays at ${money(choice.price)}.`;
+
+    message.className =
+      'code-message error';
+
+  }else if(prices[code] && choice.price){
+
+    discount = prices[code];
+    appliedCode = code;
+
+    message.textContent =
       `${discount}% discount applied to ${choice.name}.`;
 
-    message.className='code-message ok';
-  }
+    message.className =
+      'code-message ok';
 
-  else if(choice.name==='Studio'){
-    discount=0;
-    appliedCode='';
+  }else if(choice.name === 'Studio'){
 
-    message.textContent=
+    discount = 0;
+    appliedCode = '';
+
+    message.textContent =
       'Studio plans are custom quoted; your code can be reviewed with the team.';
 
-    message.className='code-message error';
-  }
+    message.className =
+      'code-message error';
 
-  else{
-    discount=0;
-    appliedCode='';
+  }else{
 
-    message.textContent=
+    discount = 0;
+    appliedCode = '';
+
+    message.textContent =
       'That code isn’t active. Please check it or contact the studio.';
 
-    message.className='code-message error';
+    message.className =
+      'code-message error';
   }
 
   refresh();
 });
 
 
-/* INITIAL STATE */
+/* --------------------------------
+   INITIAL STATE
+-------------------------------- */
+
 refresh();
 </script>
 </body>
