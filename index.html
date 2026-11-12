@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Brandier Studio</title>
+<title>Brandier Studio — AI Ads, 3D Websites & AI Automation</title>
+<meta name="description" content="Brandier Studio creates AI ads, motion graphics, 3D websites, AI agents, chatbots and business automations. Explore our creative and digital services."/>
   <link rel="icon" type="image/png" href="favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <!-- Formspree handles email delivery -->
@@ -559,6 +560,29 @@ footer{border-top:1px solid var(--border);background:var(--black);padding:32px 6
   .ft-cp{display:none}
   .btn-fill,.btn-line{padding:13px 28px}
 }
+
+/* Services expansion — native cream, serif and iridescent identity */
+#studio-expansion{scroll-margin-top:90px;padding-top:76px;padding-bottom:76px;border-bottom:1px solid var(--border)}
+.expansion-top{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:end}
+.expansion-top .s-ttl{font-size:clamp(38px,4.5vw,64px)}
+.expansion-top p{color:var(--muted);font-size:14px;max-width:470px}
+.expansion-services{display:flex;flex-wrap:wrap;gap:9px;margin-top:22px}
+.expansion-services span{font-size:11px;border:1px solid var(--border2);padding:8px 13px;border-radius:40px;background:rgba(255,255,255,.5)}
+.web-intro{margin-top:32px;padding:28px 32px;border:1px solid var(--border2);background:linear-gradient(115deg,rgba(139,63,245,.045),rgba(0,196,212,.035));display:grid;grid-template-columns:1fr auto;align-items:center;gap:28px}
+.web-intro h3{font-family:var(--serif);font-size:32px;font-weight:400;line-height:1.15;margin-bottom:8px}
+.web-intro p{font-size:12px;color:var(--muted);max-width:580px}
+.web-intro .web-process{margin-top:12px;font-size:10px;letter-spacing:.08em;color:var(--black)}
+.web-logo-link{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--white);border:1px solid var(--border2);color:var(--black);text-decoration:none;font-size:12px;white-space:nowrap;transition:transform .25s}
+.web-logo-link:hover{transform:translateY(-3px)}
+.web-logo-link img{width:32px;height:32px;object-fit:contain}
+.studio-network{width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:28px;border-top:1px solid rgba(255,255,255,.12);padding-top:24px;margin-top:8px}
+.studio-network-label{font-size:9px;color:#aaa;letter-spacing:.15em;text-transform:uppercase}
+.studio-network a{display:flex;align-items:center;gap:9px;color:#ddd;text-decoration:none;font-size:12px;padding:6px 0}
+.studio-network a:hover{color:#fff}
+.studio-network img{width:29px;height:29px;object-fit:contain}
+.studio-network a:focus-visible,.web-logo-link:focus-visible{outline:2px solid var(--c2);outline-offset:5px}
+@media(max-width:700px){.expansion-top,.web-intro{grid-template-columns:1fr;gap:20px}.web-intro{padding:24px}.web-logo-link{justify-self:start}.studio-network{gap:16px 24px}.studio-network-label{width:100%}}
+
 </style>
 </head>
 <body>
@@ -606,9 +630,9 @@ footer{border-top:1px solid var(--border);background:var(--black);padding:32px 6
   </video>
 </div>
   <div class="hero-left">
-    <div class="h-badge"><span class="h-dot"></span>AI Advertising Studio — International</div>
+    <div class="h-badge"><span class="h-dot"></span>AI Creative & Digital Studio — International</div>
     <h1 class="h-ttl">Next-Gen<br>aesthetics  for<br><span class="irid">DIGI-Scale</span></h1>
-    <p class="h-sub">Core Strength is AI UGC & Motion Graphics. Full Scope is Every Ad Format.
+    <p class="h-sub">AI ads & motion graphics. 3D websites. AI agents, chatbots & automations.
 </p>
     <div class="h-acts">
       <a href="#portfolio" class="btn-fill">View Our Work</a>
@@ -704,6 +728,21 @@ footer{border-top:1px solid var(--border);background:var(--black);padding:32px 6
     <span class="mq-item hi">TV Spot</span><span class="mq-item">Wild Card</span>
   </div>
 </div>
+
+<!-- Studio services announcement -->
+<section id="studio-expansion">
+  <div class="expansion-top">
+    <div><div class="s-lbl">Studio announcement · Now creating more</div>
+    <h2 class="s-ttl">More ways to build<br><em>your next chapter.</em></h2></div>
+    <div><p>Alongside AI ads and motion graphics, Brandier Studio now creates immersive websites and practical AI systems for your business.</p>
+    <div class="expansion-services"><span>3D Website Design</span><span>AI Agents &amp; Chatbots</span><span>AI Automations</span></div></div>
+  </div>
+  <div class="web-intro">
+    <div><h3>Meet Brandier Web.</h3><p>Thoughtful website design with 3D storytelling and scroll-driven motion, shaped around your brand.</p>
+    <p class="web-process">Discover your goals &nbsp;→&nbsp; Design &amp; build &nbsp;→&nbsp; Test &amp; launch</p></div>
+    <a class="web-logo-link" href="https://web.brandierstudio.online/" target="_blank" rel="noopener"><img src="assets/network/brandier-web.png" alt="" width="32" height="32">Explore Brandier Web <span aria-hidden="true">↗</span></a>
+  </div>
+</section>
 
 <!-- AD TYPES -->
 <section id="adtypes">
@@ -833,7 +872,7 @@ footer{border-top:1px solid var(--border);background:var(--black);padding:32px 6
     <div class="rv">
       <div class="a-eyebrow"><span style="width:6px;height:6px;background:var(--c4);border-radius:50%;display:inline-block;flex-shrink:0"></span>Brandier AI Studio</div>
       <h2 class="s-ttl">The mind<br>behind <em>Ideal Creativity</em></h2>
-      <p class="a-p">Brandier Studio is an AI-first creative house engineered by Team Anas Mehboob. We specialize exclusively in AI UGC and premium Motion Graphics. Crafting visual narratives that turn attention. Whether it’s scaling a SaaS platform, launching an E-commerce hero product, filling a Coach’s funnel, or putting an Author on the bestseller list, we replace traditional ad fatigue with high-converting, cinematic moments.</p>
+      <p class="a-p">Brandier Studio is an AI-first creative house engineered by Team Anas Mehboob. Our work spans AI UGC, premium motion graphics, 3D website design, AI agents, chatbots, and business automations. Crafting visual narratives that turn attention. Whether it’s scaling a SaaS platform, launching an E-commerce hero product, filling a Coach’s funnel, or putting an Author on the bestseller list, we replace traditional ad fatigue with high-converting, cinematic moments.</p>
       <div class="a-quote">"Our super vision, <br>Growth with AI Advertisement, <br> Instead of old Non Ai ads"</div>
       <p class="a-p">From concept to final cut, every project at Brandier Studio is crafted with cinematic precision. Whether it's a UGC ad that feels completely authentic, a TV spot with big-budget energy, or a product showcase that converts — Anas delivers results that speak louder than any budget.</p>
       <div class="a-stats">
@@ -896,6 +935,12 @@ footer{border-top:1px solid var(--border);background:var(--black);padding:32px 6
     <a href="#about">About</a><a href="#contact">Contact</a>
     <a href="https://www.fiverr.com/s/akNbvQg" target="_blank" style="background:linear-gradient(135deg,var(--c2),var(--c3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Fiverr ↗</a>
   </div>
+<div class="studio-network" aria-label="Brandier network">
+<span class="studio-network-label">Explore our world</span>
+<a href="https://web.brandierstudio.online/" target="_blank" rel="noopener"><img src="assets/network/brandier-web-dark.png" alt="" width="29" height="29">Brandier Web ↗</a>
+<a href="https://tv.brandierstudio.online/" target="_blank" rel="noopener"><img src="assets/network/brandier-tv.svg" alt="" width="29" height="29">Brandier TV ↗</a>
+<a href="https://anas.brandierstudio.online/" target="_blank" rel="noopener"><img src="assets/network/anas.png" alt="" width="29" height="29">Anas Mehboob ↗</a>
+</div>
 </footer>
 
 <script>
