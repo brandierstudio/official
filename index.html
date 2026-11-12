@@ -568,18 +568,21 @@ footer{border-top:1px solid var(--border);background:var(--black);padding:32px 6
 .announcement-cta:hover{transform:translateY(-2px);background:#24242a}
 .announcement-cta:focus-visible{outline:3px solid white;outline-offset:5px}
 .announcement-cta img{height:23px;width:23px;object-fit:contain}
-.announcement-object{position:absolute;bottom:-34px;width:200px;height:165px;border-radius:14px;background:linear-gradient(145deg,#fff,#f3eef8);box-shadow:0 9px 25px rgba(35,18,66,.2),inset 0 1px 3px #fff;pointer-events:none;z-index:-1}
-.announcement-object.left{left:-8px;transform:rotate(14deg)}
-.announcement-object.right{right:-8px;transform:rotate(-14deg)}
-.announcement-object::before{content:'';position:absolute;inset:0;background:linear-gradient(145deg,#fff,#f7f3fa);clip-path:polygon(0 0,100% 0,50% 60%);filter:drop-shadow(0 3px 3px #d9cadd)}
-.announcement-object::after{content:'';position:absolute;inset:0;background:linear-gradient(125deg,#e9e0ed,#fff);clip-path:polygon(0 100%,50% 48%,100% 100%);opacity:.85}
-@media(hover:hover) and (pointer:fine){html,body,body *{cursor:url('assets/cursor-3d.svg') 5 5,auto!important}input,textarea,[contenteditable="true"]{cursor:text!important}}
-@media(max-width:700px){#studio-expansion{padding:48px 20px 56px}.announcement-stack{gap:22px}.announcement-banner{min-height:300px;padding:30px 24px 76px;border-radius:18px}.announcement-banner h2{font-size:32px}.announcement-banner p{font-size:12px;max-width:310px}.announcement-object{width:108px;height:88px;bottom:-30px}.announcement-object.left{left:-22px}.announcement-object.right{right:-22px}.studio-network{gap:16px 24px}.studio-network-label{width:100%}}
+.announcement-banner>:not(.announcement-object){position:relative;z-index:1}
+.announcement-object{position:absolute;bottom:-23px;width:230px;height:175px;object-fit:contain;pointer-events:none;z-index:0;filter:drop-shadow(0 8px 8px rgba(35,18,66,.12))}
+.announcement-object.left{left:-21px;transform:rotate(14deg)}
+.announcement-object.right{right:-21px;transform:rotate(-14deg)}
+.cursor-follow{position:fixed;left:0;top:0;width:30px;height:30px;border:1px solid rgba(139,63,245,.4);border-radius:50%;background:radial-gradient(circle,rgba(0,196,212,.08),rgba(139,63,245,.035));pointer-events:none;z-index:9998;opacity:0;transform:translate(-50%,-50%);transition:width .25s,height .25s,opacity .2s,background .25s;will-change:left,top}
+.cursor-follow.is-visible{opacity:1}.cursor-follow.is-hover{width:46px;height:46px;background:rgba(139,63,245,.07)}
+@media(hover:none),(pointer:coarse),(prefers-reduced-motion:reduce){.cursor-follow{display:none}}
+@media(hover:hover) and (pointer:fine){html,body,body *{cursor:url('assets/cursor-3d.svg') 3 3,auto!important}input,textarea,[contenteditable="true"]{cursor:text!important}}
+@media(max-width:700px){#studio-expansion{padding:48px 20px 56px}.announcement-stack{gap:22px}.announcement-banner{min-height:300px;padding:30px 24px 76px;border-radius:18px}.announcement-banner h2{font-size:32px}.announcement-banner p{font-size:12px;max-width:310px}.announcement-object{width:120px;height:92px;bottom:-10px}.announcement-object.left{left:-22px}.announcement-object.right{right:-22px}.studio-network{gap:16px 24px}.studio-network-label{width:100%}}
 @media(prefers-reduced-motion:reduce){.announcement-cta{transition:none}}
 
 </style>
 </head>
 <body>
+<div class="cursor-follow" aria-hidden="true"></div>
 
 
 
@@ -905,19 +908,19 @@ footer{border-top:1px solid var(--border);background:var(--black);padding:32px 6
   <div class="announcements-label">The Brandier world · Now creating more</div>
   <div class="announcement-stack">
     <article class="announcement-banner ann-web">
-      <span class="announcement-object left" aria-hidden="true"></span><span class="announcement-object right" aria-hidden="true"></span>
+      <img class="announcement-object left" src="assets/envelope-3d.svg" alt="" width="230" height="175" aria-hidden="true"><img class="announcement-object right" src="assets/envelope-3d.svg" alt="" width="230" height="175" aria-hidden="true">
       <div class="announcement-kicker">Now at Brandier Studio</div>
       <h2>Your next website.<br><em>A whole new dimension.</em></h2><p>3D website design, AI agents, chatbots &amp; automations.<br>Discover what we can build for your business.</p>
       <a class="announcement-cta" href="https://web.brandierstudio.online/" target="_blank" rel="noopener"><img src="assets/network/brandier-web-dark.png" alt="" width="23" height="23">Explore Brandier Web <span aria-hidden="true">↗</span></a>
     </article>
     <article class="announcement-banner ann-tv">
-      <span class="announcement-object left" aria-hidden="true"></span><span class="announcement-object right" aria-hidden="true"></span>
+      <img class="announcement-object left" src="assets/envelope-3d.svg" alt="" width="230" height="175" aria-hidden="true"><img class="announcement-object right" src="assets/envelope-3d.svg" alt="" width="230" height="175" aria-hidden="true">
       <div class="announcement-kicker">The creative showcase</div>
       <h2>Big ideas.<br><em>Made to be watched.</em></h2><p>AI films, UGC ads and motion graphics.<br>Explore the creative world of Brandier Studio.</p>
       <a class="announcement-cta" href="https://tv.brandierstudio.online/" target="_blank" rel="noopener"><img src="assets/network/brandier-tv.svg" alt="" width="23" height="23">Watch Brandier TV <span aria-hidden="true">↗</span></a>
     </article>
     <article class="announcement-banner ann-anas">
-      <span class="announcement-object left" aria-hidden="true"></span><span class="announcement-object right" aria-hidden="true"></span>
+      <img class="announcement-object left" src="assets/envelope-3d.svg" alt="" width="230" height="175" aria-hidden="true"><img class="announcement-object right" src="assets/envelope-3d.svg" alt="" width="230" height="175" aria-hidden="true">
       <div class="announcement-kicker">Meet the creative behind the work</div>
       <h2>One vision.<br><em>More possibilities.</em></h2><p>AI advertising, 3D websites and connected AI systems.<br>Explore Anas Mehboob’s work and services.</p>
       <a class="announcement-cta" href="https://anas.brandierstudio.online/" target="_blank" rel="noopener"><img src="assets/network/anas.png" alt="" width="23" height="23">Meet Anas Mehboob <span aria-hidden="true">↗</span></a>
@@ -948,6 +951,32 @@ footer{border-top:1px solid var(--border);background:var(--black);padding:32px 6
 </footer>
 
 <script>
+/* Smooth pointer halo: desktop only, respects reduced motion. */
+(() => {
+  const halo=document.querySelector('.cursor-follow');
+  const fine=matchMedia('(hover:hover) and (pointer:fine)');
+  const reduced=matchMedia('(prefers-reduced-motion:reduce)');
+  let x=0,y=0,tx=0,ty=0,frame=0,active=false;
+  function tick(){
+    if(!active){frame=0;return;}
+    x+=(tx-x)*.16;y+=(ty-y)*.16;
+    halo.style.left=x+'px';halo.style.top=y+'px';
+    if(Math.abs(tx-x)+Math.abs(ty-y)>.15)frame=requestAnimationFrame(tick);else frame=0;
+  }
+  function stop(){active=false;halo.classList.remove('is-visible','is-hover');cancelAnimationFrame(frame);frame=0;}
+  document.addEventListener('pointermove',e=>{
+    if(!fine.matches||reduced.matches||e.pointerType==='touch'){stop();return;}
+    tx=e.clientX;ty=e.clientY;
+    if(!active){x=tx;y=ty;active=true;}
+    halo.classList.add('is-visible');
+    halo.classList.toggle('is-hover',!!e.target.closest('a,button,[role="button"],.ad-card'));
+    if(!frame)tick();
+  },{passive:true});
+  document.documentElement.addEventListener('pointerleave',stop);
+  window.addEventListener('blur',stop);
+  fine.addEventListener('change',stop);reduced.addEventListener('change',stop);
+})();
+
 /* ─── NAV ─── */
 const nav=document.getElementById('nav');
 window.addEventListener('scroll',()=>nav.classList.toggle('sc',scrollY>60));
