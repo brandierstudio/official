@@ -1,0 +1,682 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body style="margin:0;min-height:100vh;background:white"><!--
+  ALL PRODUCTS — embeddable rail product listing.
+  Paste this entire file's contents into your page where the section should appear.
+  No <html>, <head>, <body>, branding, navigation, or homepage hero is included.
+  Plain HTML, scoped CSS and vanilla JS. Product sheet URLs/crops come from the supplied specification.
+-->
+<link rel="preconnect" href="https://images.higgs.ai" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* All classes scoped to ar-*; parent page's scrolling/navigation is untouched. */
+.ar-products, .ar-products * { box-sizing: border-box; }
+.ar-products { --ar-ivory:#FAF7F2; --ar-ink:#1A1716; --ar-muted:#746A5E; --ar-line:#DDD5C9; --ar-u:1px;
+  position:relative; width:100%; height:clamp(620px, 61vw, 780px); min-height:620px; isolation:isolate;
+  overflow:hidden; background:var(--ar-ivory); color:var(--ar-ink); font-family:'Inter',system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased; }
+.ar-products button { font:inherit; color:inherit; cursor:pointer; }
+.ar-products button:focus-visible { outline:2px solid #6d604e; outline-offset:4px; }
+.ar-products button[disabled] { opacity:.46; cursor:not-allowed; }
+.ar-shell { position:absolute; inset:0; transition: filter .45s ease, opacity .45s ease, transform .6s cubic-bezier(.22,1,.36,1); }
+.ar-products.ar-qv-open .ar-shell { filter:blur(8px); opacity:.22; pointer-events:none; }
+.ar-products.ar-cart-open .ar-shell { transform:translateX(min(-15vw,-80px)); }
+.ar-heading { position:absolute; top:calc(34 * var(--ar-u)); left:calc(51 * var(--ar-u)); z-index:5; margin:0;
+  font-size:calc(32 * var(--ar-u)); font-weight:600; line-height:1.16; letter-spacing:-.052em; }
+.ar-bag { position:absolute; top:calc(30 * var(--ar-u)); right:calc(51 * var(--ar-u));
+  width:calc(46 * var(--ar-u)); height:calc(46 * var(--ar-u)); border:1px solid var(--ar-line);
+  background:#f5efe7; border-radius:50%; display:grid; place-items:center; z-index:6; transition:transform .2s; }
+.ar-bag:hover { transform:translateY(-2px); }
+.ar-bag svg { width:calc(22 * var(--ar-u)); height:calc(22 * var(--ar-u)); fill:none; stroke:currentColor; stroke-width:1.7; }
+.ar-bag-count { position:absolute; top:calc(-7 * var(--ar-u)); right:calc(-7 * var(--ar-u)); min-width:calc(18 * var(--ar-u));
+  height:calc(18 * var(--ar-u)); padding:0 4px; border-radius:99px; display:grid; place-items:center;
+  background:#0e0d0c; color:#fff; font-weight:700; font-size:calc(10 * var(--ar-u)); }
+.ar-rail-zone { position:absolute; top:calc(88 * var(--ar-u)); bottom:calc(65 * var(--ar-u)); inset-inline:0;
+  overflow:hidden; cursor:grab; touch-action:pan-y; user-select:none; -webkit-user-select:none; }
+.ar-rail-zone.is-grabbing { cursor:grabbing; }
+.ar-rail-svg { position:absolute; width:100%; height:100%; inset:0; overflow:visible; pointer-events:none; }
+.ar-garments { position:absolute; inset:0; pointer-events:none; }
+.ar-piece { position:absolute; left:0; top:0; width:0; height:0; pointer-events:none; transform:translate3d(-9999px,-9999px,0); will-change:transform; }
+.ar-piece.is-hovered { z-index:10 !important; }
+.ar-drop, .ar-sway, .ar-lift { position:absolute; top:0; left:0; transform-origin:0 0; }
+.ar-sway { will-change:transform; }
+.ar-lift { transform-style:preserve-3d; perspective:700px; transition:transform .42s cubic-bezier(.22,1,.36,1); }
+.ar-piece.is-hovered .ar-lift { transform:translateY(calc(12 * var(--ar-u))) scale(1.2); }
+.ar-face { position:absolute; display:block; top:0; background-repeat:no-repeat; transform-origin:50% 0; backface-visibility:hidden;
+  -webkit-backface-visibility:hidden; will-change:transform,opacity; pointer-events:none; }
+.ar-face-side { transform:rotateY(0deg); transition:transform .15s cubic-bezier(0,0,.3,1) .15s; }
+.ar-face-front { transform:rotateY(90deg); transition:transform .15s cubic-bezier(.5,0,1,1); }
+.ar-piece.is-hovered .ar-face-side { transform:rotateY(-90deg); transition:transform .15s cubic-bezier(.5,0,1,1); }
+.ar-piece.is-hovered .ar-face-front { transform:rotateY(0deg); transition:transform .15s cubic-bezier(0,0,.3,1) .15s; }
+.ar-tag { position:absolute; top:calc(52 * var(--ar-u)); left:calc(-6 * var(--ar-u)); width:calc(35 * var(--ar-u));
+  height:calc(19 * var(--ar-u)); border-radius:2px; box-shadow:0 1px 3px rgba(60,45,30,.18);
+  display:flex; justify-content:center; align-items:center; background:#F6F1E7;
+  font-size:calc(9.6 * var(--ar-u)); font-weight:600; color:#2A2420; }
+.ar-tag:before { content:""; position:absolute; top:calc(2 * var(--ar-u)); left:50%; width:calc(2.4 * var(--ar-u));
+  height:calc(2.4 * var(--ar-u)); border-radius:50%; background:#B9AE9C; }
+.ar-shadow { position:absolute; height:calc(16 * var(--ar-u));
+  transform:translateX(-50%); background:radial-gradient(closest-side,rgba(70,52,34,.13),transparent); pointer-events:none; }
+.ar-hit { position:absolute; top:calc(-8 * var(--ar-u)); border:0; background:transparent; opacity:0; pointer-events:auto;
+  padding:0; outline-offset:-2px; }
+.ar-footer { position:absolute; bottom:calc(30 * var(--ar-u)); left:calc(51 * var(--ar-u)); right:calc(51 * var(--ar-u));
+  display:flex; justify-content:space-between; gap:16px; align-items:center; z-index:5; }
+.ar-hint { display:flex; align-items:center; min-height:34px; color:#776D63; font-size:calc(13.5 * var(--ar-u)); }
+.ar-hint:before { content:""; flex:none; display:inline-block; width:calc(25 * var(--ar-u)); height:1px;
+  background:#8E857A; margin-right:calc(13 * var(--ar-u)); }
+.ar-hint-name { color:var(--ar-ink); font-weight:600; }
+.ar-hint-price { font-weight:400; color:var(--ar-muted); margin-left:9px; }
+.ar-progress { position:relative; flex:none; width:calc(140 * var(--ar-u)); height:2px; background:#DCD4C8; }
+.ar-progress-thumb { position:absolute; left:0; width:58%; height:100%; background:var(--ar-ink); }
+/* Quick view: lives outside the rail, never turns the parent webpage into a fixed hero. */
+.ar-qv { position:fixed; inset:0; z-index:10001; display:grid; grid-template-columns:minmax(0,1fr) minmax(350px,430px);
+  gap:clamp(24px,6vw,98px); padding:clamp(45px,7vh,80px) clamp(22px,6vw,100px);
+  background:#FAF7F2; color:#1A1716; overflow:auto; }
+.ar-qv[hidden], .ar-scrim[hidden] { display:none !important; }
+.ar-qv-imagebox { position:relative; min-height:0; display:flex; justify-content:center; align-items:flex-start; }
+.ar-qv-rod { position:absolute; left:50%; top:calc(-1 * clamp(45px,7vh,80px)); width:1.5px; height:calc(clamp(45px,7vh,80px) + 62px);
+  background:#3B3631; transform:translateX(-50%); }
+.ar-qv-face { position:absolute; left:50%; top:62px; transform:translateX(-50%); transition:opacity .25s ease;
+  backface-visibility:hidden; }
+.ar-qv-face.is-hidden { opacity:0; visibility:hidden; }
+.ar-qv-close { position:fixed; right:28px; top:22px; z-index:10003; border:1.5px solid #1A1716; border-radius:99px;
+  background:#FAF7F2; padding:7px 15px; font-size:14px; font-weight:500; }
+.ar-qv-info { align-self:center; width:100%; }
+.ar-qv-counter { color:#8A7F72; font-size:12px; letter-spacing:.12em; margin:0 0 18px; }
+.ar-qv-title { font-size:clamp(23px,2.1vw,32px); letter-spacing:-.02em; font-weight:600; margin:0 0 14px; line-height:1.2; }
+.ar-qv-price { font-weight:600; font-size:16px; margin:0 0 36px; }
+.ar-tabs { display:flex; gap:32px; margin-bottom:33px; }
+.ar-tab { padding:0 0 7px; background:none; border:0; border-bottom:2px solid transparent; color:#8A7F72 !important;
+  font-size:15px; }
+.ar-tab[aria-selected="true"] { color:#1A1716 !important; border-bottom-color:#1A1716; }
+.ar-size-title { color:#8A7F72; letter-spacing:.14em; font-size:11px; margin:0 0 15px; }
+.ar-sizes { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:30px; }
+.ar-size { width:52px; height:44px; border:1.5px solid #DDD5C9; border-radius:99px; background:transparent; font-size:14px; }
+.ar-size[aria-pressed="true"] { background:#0E0D0C; color:white; border-color:#0E0D0C; }
+.ar-add { width:100%; min-height:58px; border:0; border-radius:99px; background:#0E0D0C;
+  color:white !important; font-weight:600; font-size:16px; display:flex; justify-content:center; align-items:center; gap:10px; }
+.ar-add.is-loading { background:#8D8780; }
+.ar-spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,.45); border-top-color:white; border-radius:50%;
+  animation:ar-spin .7s linear infinite; }
+@keyframes ar-spin {to{transform:rotate(360deg)}}
+.ar-qv-meta { border-top:1px solid #DDD5C9; padding-top:21px; margin-top:35px;
+  font-size:13.5px; color:#746A5E; display:flex; justify-content:space-between; gap:12px; }
+/* Cart drawer */
+.ar-scrim { position:fixed; inset:0; z-index:10002; background:rgba(21,17,13,.23); opacity:0; transition:opacity .3s; }
+.ar-scrim.is-visible { opacity:1; }
+.ar-drawer { position:fixed; z-index:10003; top:0; right:0; bottom:0; width:min(560px,100vw);
+  transform:translateX(103%); transition:transform .6s cubic-bezier(.22,1,.36,1);
+  background:#FDFBF7; box-shadow:-8px 0 28px rgba(39,31,22,.06); border-left:1px solid #DDD5C9;
+  display:flex; flex-direction:column; color:#1A1716; }
+.ar-drawer[aria-hidden="false"] { transform:translateX(0); }
+.ar-drawer-header { display:flex; align-items:center; gap:12px; padding:30px 30px 24px; border-bottom:1px solid #ECE6DC; }
+.ar-drawer-title { margin:0; font-size:27px; font-weight:700; letter-spacing:-.02em; }
+.ar-drawer-count { display:grid; place-items:center; padding:0 7px; min-width:24px; height:24px; background:#E9E3DA; border-radius:50px; font-size:12px; font-weight:600; }
+.ar-drawer-close { margin-left:auto; display:grid; place-items:center; width:40px; height:40px; border-radius:99px;
+  border:0; background:#EFEAE2; font-size:23px; }
+.ar-cart-list { padding:0 30px; flex:1; overflow-y:auto; overscroll-behavior:contain; }
+.ar-cart-empty { padding:40px 0; color:#746A5E; font-size:14px; }
+.ar-cart-row { display:grid; grid-template-columns:76px minmax(0,1fr) auto; gap:18px; padding:18px 0; border-bottom:1px solid #ECE6DC; }
+.ar-cart-thumb { position:relative; width:76px; height:96px; overflow:hidden; background:#F5EFE6; border-radius:3px; }
+.ar-cart-thumb-face { position:absolute; top:4px; left:50%; transform:translateX(-50%); }
+.ar-cart-name { font-size:16px; font-weight:500; margin:1px 0 8px; }
+.ar-cart-detail { color:#6F665C; font-size:13px; line-height:1.5; margin-bottom:11px; }
+.ar-cart-total-line { white-space:nowrap; font-size:15px; font-weight:600; }
+.ar-quantity { display:inline-flex; height:35px; align-items:center; border:1px solid #DCD4C8; border-radius:4px; }
+.ar-quantity button { border:0; width:31px; height:33px; background:none; font-size:17px; }
+.ar-quantity span { text-align:center; min-width:19px; font-size:13px; }
+.ar-remove { margin-left:10px; border:0; background:none; font-size:13px; text-decoration:underline; color:#746A5E !important; }
+.ar-cart-bottom { padding:24px 30px 30px; border-top:1px solid #DCD4C8; }
+.ar-cart-sum { display:flex; justify-content:space-between; gap:15px; font-weight:600; font-size:19px; }
+.ar-cart-note { color:#8A7F72; font-size:12.5px; margin:14px 0 23px; }
+.ar-checkout { width:100%; min-height:52px; color:white !important; background:black; border:0; border-radius:3px; font-weight:600; }
+.ar-fly { position:fixed !important; z-index:10010; pointer-events:none; transform-origin:top left; }
+
+/* Original clothing assets: loading/error panel only; never substitute synthetic silhouettes. */
+.ar-asset-status { position:absolute; z-index:25; top:56%; left:50%; transform:translate(-50%,-50%);
+  width:min(460px,calc(100% - 32px)); padding:18px 22px; border:1px solid #DDD5C9;
+  background:rgba(250,247,242,.97); box-shadow:0 12px 35px rgba(38,26,15,.07);
+  text-align:center; font-size:14px; line-height:1.55; pointer-events:auto; }
+.ar-asset-status[hidden], .ar-asset-inputs[hidden] {display:none!important;}
+.ar-asset-inputs { margin-top:14px; display:flex; flex-wrap:wrap; justify-content:center; gap:10px; }
+.ar-asset-inputs label { font-size:12px; border:1px solid #DDD5C9; padding:6px 9px; cursor:pointer; }
+.ar-asset-inputs input { display:block; width:130px; max-width:100%; font-size:11px; }
+
+@media(max-width:820px) {
+  .ar-products { height:clamp(570px, 165vw, 680px); min-height:570px; }
+  .ar-heading { top:calc(23 * var(--ar-u)); left:calc(21 * var(--ar-u)); font-size:calc(28 * var(--ar-u)); }
+  .ar-bag { top:calc(18 * var(--ar-u)); right:calc(23 * var(--ar-u)); }
+  .ar-rail-zone { top:calc(69 * var(--ar-u)); bottom:calc(68 * var(--ar-u)); }
+  .ar-footer { left:calc(21 * var(--ar-u)); right:calc(21 * var(--ar-u)); bottom:calc(21 * var(--ar-u)); }
+  .ar-hint { font-size:calc(11.8 * var(--ar-u)); }
+  .ar-hint:before { width:calc(12 * var(--ar-u)); margin-right:calc(7 * var(--ar-u)); }
+  .ar-progress { width:calc(78 * var(--ar-u)); }
+  .ar-qv { grid-template-columns:1fr; grid-template-rows:minmax(250px, 45vh) auto; gap:10px;
+    padding:34px 21px 24px; align-content:start; }
+  .ar-qv-rod { top:-34px; height:80px; }
+  .ar-qv-face { top:46px; }
+  .ar-qv-info { align-self:start; padding:8px 0 20px; }
+  .ar-qv-counter { margin-bottom:9px; }
+  .ar-qv-title { font-size:23px; margin-bottom:8px; }
+  .ar-qv-price { margin-bottom:18px; }
+  .ar-tabs { margin-bottom:20px; }
+  .ar-size-title { margin-bottom:10px; }
+  .ar-sizes { margin-bottom:18px; }
+  .ar-qv-meta { margin-top:20px; }
+  .ar-qv-close { top:12px; right:14px; font-size:12px; padding:5px 12px; }
+  .ar-products.ar-cart-open .ar-shell { transform:none; }
+  .ar-cart-list { padding:0 20px; }
+  .ar-drawer-header, .ar-cart-bottom { padding-inline:20px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .ar-products *, .ar-products *::before, .ar-products *::after { transition-duration:0s!important; animation-duration:0s!important; }
+}
+</style>
+
+<section class="ar-products" id="all-products" aria-labelledby="all-products-heading">
+  <div class="ar-shell">
+    <h2 class="ar-heading" id="all-products-heading">All Products</h2>
+    <button class="ar-bag" type="button" aria-label="Open shopping cart" aria-controls="ar-cart" aria-expanded="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 8h15l-1 12h-13z"/><path d="M8 9V6a4 4 0 0 1 8 0v3"/></svg>
+      <span class="ar-bag-count">3</span>
+    </button>
+    <div class="ar-rail-zone" aria-label="Drag or scroll horizontally to explore clothes">
+      <svg class="ar-rail-svg" aria-hidden="true" preserveAspectRatio="none"><defs><linearGradient id="ar-gold-gradient" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#E9DCBC"/><stop offset=".45" stop-color="#C2A877"/><stop offset="1" stop-color="#7F6743"/></linearGradient></defs><path class="ar-rail-shadow" fill="none" stroke="rgba(80,60,35,.12)"/><path class="ar-rail-gold" fill="none" stroke="url(#ar-gold-gradient)"/><path class="ar-rail-shine" fill="none" stroke="rgba(255,247,226,.85)"/></svg>
+      <div class="ar-garments"></div>
+      <div class="ar-asset-status" role="status" aria-live="polite">
+        <div class="ar-asset-message">Loading original clothes…</div>
+        <div class="ar-asset-inputs" hidden>
+          <label>Side PNG<input type="file" accept="image/png,image/webp" data-original-view="side"></label>
+          <label>Front PNG<input type="file" accept="image/png,image/webp" data-original-view="front"></label>
+          <label>Back PNG<input type="file" accept="image/png,image/webp" data-original-view="back"></label>
+        </div>
+      </div>
+    </div>
+    <div class="ar-footer">
+      <div class="ar-hint" aria-live="polite"><span class="ar-hint-text">Hover a piece · click to look closer</span></div>
+      <div class="ar-progress" aria-label="Rail scroll progress"><div class="ar-progress-thumb"></div></div>
+    </div>
+  </div>
+
+  <div class="ar-qv" role="dialog" aria-modal="true" aria-labelledby="ar-qv-title" hidden>
+    <button class="ar-qv-close" type="button" aria-label="Close product view">Close ×</button>
+    <div class="ar-qv-imagebox"><div class="ar-qv-rod"></div><div class="ar-qv-face ar-face-front"></div><div class="ar-qv-face ar-face-back is-hidden"></div></div>
+    <div class="ar-qv-info">
+      <p class="ar-qv-counter"></p>
+      <h3 class="ar-qv-title" id="ar-qv-title"></h3>
+      <p class="ar-qv-price">$690.00</p>
+      <div class="ar-tabs" role="tablist" aria-label="Product views"><button class="ar-tab" data-view="front" role="tab" aria-selected="true">Front</button><button class="ar-tab" data-view="back" role="tab" aria-selected="false">Back</button></div>
+      <p class="ar-size-title">SIZE</p>
+      <div class="ar-sizes" role="group" aria-label="Choose size"><button type="button" class="ar-size" aria-pressed="true" data-size="S">S</button><button type="button" class="ar-size" aria-pressed="false" data-size="M">M</button><button type="button" class="ar-size" aria-pressed="false" data-size="L">L</button><button type="button" class="ar-size" aria-pressed="false" data-size="XL">XL</button></div>
+      <button type="button" class="ar-add">Add to cart</button>
+      <div class="ar-qv-meta"><span class="ar-qv-meta-name"></span></div>
+    </div>
+  </div>
+  <div class="ar-scrim" hidden></div>
+  <aside class="ar-drawer" id="ar-cart" role="dialog" aria-modal="true" aria-label="Shopping cart" aria-hidden="true">
+    <header class="ar-drawer-header"><h3 class="ar-drawer-title">Cart</h3><span class="ar-drawer-count">3</span><button class="ar-drawer-close" type="button" aria-label="Close shopping cart">×</button></header>
+    <div class="ar-cart-list"></div>
+    <div class="ar-cart-bottom"><div class="ar-cart-sum"><span>Estimated total</span><span class="ar-cart-amount">$2,070.00</span></div><p class="ar-cart-note">Taxes and shipping calculated at checkout.</p><button class="ar-checkout" type="button" disabled title="Connect your live checkout URL to activate checkout">Checkout</button></div>
+  </aside>
+</section>
+
+<script>
+(function initAllProducts(){
+  'use strict';
+  const root = document.getElementById('all-products');
+  if (!root || root.dataset.initialized === 'true') return;
+  root.dataset.initialized = 'true';
+
+  // Source garment sprites from the original supplied rail specification.
+  const sources = {
+    side: 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20261113_115504_3ab92758-5854-4a1c-85db-ff8efd929e86.png',
+    front:'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20261113_115743_54dc8c72-0be0-4858-bd0c-10ecb399c16c.png',
+    back: 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20261113_115613_7d45aea6-1bea-41ff-b878-72d7c8bcb9da.png'
+  };
+  // Use genuine 1360×2048 garment sheets only. Try local copies, then original CDN and image proxy.
+  // To make the section completely reliable in production, save the three actual source
+  // PNGs as assets/side.png, assets/front.png and assets/back.png on YOUR website.
+  // The user can also supply them via the error panel when viewing this file locally.
+  const imageURL = { side:'',front:'',back:'' };
+  const assetReady = { side:false,front:false,back:false };
+  const assetStatus = root.querySelector('.ar-asset-status');
+  const assetMessage = root.querySelector('.ar-asset-message');
+  const assetInputs = root.querySelector('.ar-asset-inputs');
+  const proxyURL = url=>'https://images.higgs.ai/?default=1&output=webp&url='+encodeURIComponent(url)+'&w=1360&q=85';
+  const assetBase = (root.dataset.spriteBase || 'assets').replace(/\/$/,'');
+  let introDone=false;
+
+  const crops = {
+    side:[[44,619,185],[45,860,514],[45,876,834],[45,606,1169],[1024,937,177],[1024,936,511],[1024,907,825],[1024,962,1166]],
+    front:[[79,552,175],[76,900,511],[76,913,848],[80,550,1179],[1024,936,177],[1024,940,513],[1024,894,851],[1024,938,1185]],
+    back:[[76,515,176],[60,890,508],[60,901,845],[76,520,1180],[1026,931,175],[1026,929,508],[1024,901,845],[1024,934,1184]]
+  };
+  const names = ['Noir Tailored Blazer','Ivory Belted Trench','Oxblood Silk Slip','Taupe Wool Blazer',
+    'Champagne Bias Slip','Pearl Silk Slip','Taupe Belted Trench','Oxblood Satin Gown'];
+  const order = [0,1,2,3,4,0,5,6,7,0,4,1,2,3,5,6,7,1,4,3];
+  const tagAngles=[-5,4,-3,6,-4,3,-6,4,-3,5];
+  const price=690;
+  const money=n=>'$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const $=s=>root.querySelector(s);
+  const $$=s=>Array.from(root.querySelectorAll(s));
+  const zone=$('.ar-rail-zone'), garments=$('.ar-garments'), rail=$('.ar-rail-svg'), hint=$('.ar-hint-text');
+  const bag=$('.ar-bag'), badge=$('.ar-bag-count'), progress=$('.ar-progress-thumb');
+  const modal=$('.ar-qv'), qvFront=$('.ar-qv-face.ar-face-front'), qvBack=$('.ar-qv-face.ar-face-back');
+  const drawer=$('.ar-drawer'), scrim=$('.ar-scrim'), cartList=$('.ar-cart-list');
+  const cartCount=$('.ar-drawer-count'), cartAmount=$('.ar-cart-amount');
+  const addBtn=$('.ar-add'), closeQV=$('.ar-qv-close');
+  let width=0,height=0,u=1,gs=.455,gap=121,start=113,railTop=148,sag=50;
+  let cur=0,target=0,maxScroll=0,velocity=0,lastTime=0;
+  let hovered=-1,selectedIndex=-1,selectedSize='S',selectedView='front';
+  let modalToken=0,addBusy=false,cartOpen=false,drag=null,suppressClickUntil=0;
+  let cart=[{k:3,size:'M',qty:1},{k:4,size:'S',qty:1},{k:1,size:'M',qty:1}];
+  // For an EMPTY new store cart, replace the line above with: let cart=[];
+  // To enable checkout, supply an actual URL (leave empty if not connected).
+  const CHECKOUT_URL='';
+  let lastFocus=null;
+  const items=[];
+  // Test actual pixel decoding, not just whether a URL string exists.
+  // Loading the CDN and proxy in parallel prevents a failing proxy from hiding real images.
+  function probeImage(url,timeout=11000){
+    return new Promise((resolve,reject)=>{
+      const img=new Image();let finished=false;
+      const end=(ok)=>{if(finished)return;finished=true;clearTimeout(t);img.onload=img.onerror=null;
+        if(ok&&img.naturalWidth>=1360&&img.naturalHeight>=2048)resolve(url);
+        else reject(new Error('Original sheet unavailable or wrong dimensions: '+url));};
+      const t=setTimeout(()=>end(false),timeout);
+      img.onload=()=>end(true);img.onerror=()=>end(false);img.src=url;
+    });
+  }
+  function refreshOriginalClothes(){
+    if(!items.length)return;
+    layout();renderCart();
+    const missing=['side','front'].filter(v=>!assetReady[v]);
+    if(missing.length===0){
+      assetStatus.hidden=true;
+      if(!introDone){introDone=true;launchIntro();}
+    }else if(Object.values(assetReady).some(Boolean)){
+      assetStatus.hidden=false;
+      assetMessage.textContent='Original '+missing.join(' + ')+' clothing sheet'+(missing.length>1?'s are':' is')+' unavailable. Upload the matching original PNGs below.';
+      assetInputs.hidden=false;
+    }
+  }
+  async function loadOriginalSheet(view){
+    try {const url=await probeImage(assetBase+'/'+view+'.png',1800);
+      imageURL[view]=url;assetReady[view]=true;refreshOriginalClothes();return true;} catch(e){}
+    try {const url=await Promise.any([probeImage(sources[view]),probeImage(proxyURL(sources[view]))]);
+      imageURL[view]=url;assetReady[view]=true;refreshOriginalClothes();return true;} catch(e){}
+    assetReady[view]=false;
+    if(view!=='back'||(!assetReady.side||!assetReady.front)){
+      assetStatus.hidden=false;
+      assetMessage.textContent='Original clothing images could not load from the supplied links. To show the SAME clothes, select the three original PNG sheets below (or place them in assets/).';
+      assetInputs.hidden=false;
+    }
+    return false;
+  }
+  const sheets={};
+  for(const view of Object.keys(sources))sheets[view]=loadOriginalSheet(view);
+  assetInputs.querySelectorAll('input[data-original-view]').forEach(input=>input.addEventListener('change',async()=>{
+    const file=input.files&&input.files[0];if(!file)return;
+    const view=input.dataset.originalView,url=URL.createObjectURL(file);
+    try{
+      await probeImage(url,3000);
+      imageURL[view]=url;assetReady[view]=true;
+      refreshOriginalClothes();
+      if(view==='back'&&selectedIndex>=0)sizeQuickView();
+    }catch(e){URL.revokeObjectURL(url);assetMessage.textContent='Please use the original '+view+' sheet: 1360 × 2048 PNG/WebP.';}
+  }));
+
+  function setCrop(el,view,k,scale){
+    const [y,h,hookX]=crops[view][k];
+    el.style.width=(340*scale)+'px';
+    el.style.height=((h+6)*scale)+'px';
+    el.style.backgroundImage=imageURL[view]?'url("'+imageURL[view]+'")':'none';
+    el.style.backgroundSize=(1360*scale)+'px auto';
+    el.style.backgroundPosition=(-(hookX-170)*scale)+'px '+(-y*scale)+'px';
+    el.style.backgroundRepeat='no-repeat';
+    el.dataset.view=view;el.dataset.k=String(k);
+  }
+  function makePiece(k,i){
+    const element=document.createElement('div');element.className='ar-piece';element.style.zIndex=String(1+i%4);
+    const drop=document.createElement('div');drop.className='ar-drop';
+    const sway=document.createElement('div');sway.className='ar-sway';
+    const lift=document.createElement('div');lift.className='ar-lift';
+    const side=document.createElement('div');side.className='ar-face ar-face-side';
+    const front=document.createElement('div');front.className='ar-face ar-face-front';
+    const tag=document.createElement('span');tag.className='ar-tag';tag.textContent='$690';
+    tag.style.transform='rotate('+tagAngles[i%tagAngles.length]+'deg)';
+    lift.append(side,front,tag);sway.appendChild(lift);drop.appendChild(sway);
+    const shadow=document.createElement('div');shadow.className='ar-shadow';
+    const hit=document.createElement('button');hit.className='ar-hit';hit.type='button';
+    hit.setAttribute('aria-label',names[k]+', '+money(price));
+    hit.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse'&&!drag&&!addBusy)hover(i)});
+    hit.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse'&&!drag)unhover(i)});
+    hit.addEventListener('focus',()=>hover(i));
+    hit.addEventListener('blur',()=>unhover(i));
+    hit.addEventListener('click',()=>{
+      if(performance.now()<suppressClickUntil||addBusy||cartOpen||selectedIndex>=0)return;
+      if(matchMedia('(hover: none)').matches && hovered!==i){hover(i);return}
+      openQuickView(i);
+    });
+    element.append(shadow,drop,hit);garments.appendChild(element);
+    return {k,i,element,drop,sway,lift,side,front,tag,shadow,hit,angle:0,av:0,offset:0,impulse:0};
+  }
+  for(let i=0;i<order.length;i++)items.push(makePiece(order[i],i));
+
+  function railY(x){
+    const t=Math.max(-1,Math.min(1,(x-width/2)/(width/2||1)));
+    return (railTop+sag*(1-t*t))*u;
+  }
+  function layout(){
+    width=zone.clientWidth;height=root.clientHeight;
+    if(!width||!height)return;
+    const mobile=width<=820;
+    u=mobile?Math.min(width/390,height/670):Math.min(width/1440,height/780);
+    u=Math.max(.35,u);
+    root.style.setProperty('--ar-u',u+'px');
+    gs=mobile?.30:.455;gap=mobile?80:121;start=mobile?46:113;
+    railTop=mobile?158:148;sag=mobile?26:50;
+    rail.setAttribute('viewBox',`0 0 ${width} ${zone.clientHeight}`);
+    const y0=railY(0), ym=railY(width/2), controlY=2*ym-y0;
+    const d=`M 0 ${y0} Q ${width/2} ${controlY} ${width} ${y0}`;
+    for(const path of $$('.ar-rail-svg path')){
+      const shift=path.classList.contains('ar-rail-shadow')?4*u:path.classList.contains('ar-rail-shine')?-1.3*u:0;
+      path.setAttribute('d',`M 0 ${y0+shift} Q ${width/2} ${controlY+shift} ${width} ${y0+shift}`);
+      path.setAttribute('stroke-width',(path.classList.contains('ar-rail-shadow')?3:path.classList.contains('ar-rail-shine')?1.1:5.2)*u);
+    }
+    maxScroll=Math.max(0,(2*start+(order.length-1)*gap)*u-width);
+    cur=Math.min(cur,maxScroll);target=Math.min(target,maxScroll);
+    for(const item of items){
+      setCrop(item.side,'side',item.k,gs*u);setCrop(item.front,'front',item.k,gs*u);
+      const h=crops.side[item.k][1]*gs*u;
+      item.shadow.style.width=(110*(gs/.48)*u)+'px';item.shadow.style.top=(h+4*u)+'px';
+      item.hit.style.width=(gap*u)+'px';item.hit.style.height=(h+24*u)+'px';item.hit.style.left=(-gap*u/2)+'px';
+    }
+    if(selectedIndex>=0)sizeQuickView();
+    tickPositions(1);
+  }
+  function hover(i){
+    if(selectedIndex>=0||cartOpen||drag?.active)return;
+    if(hovered===i)return;
+    if(hovered>=0)items[hovered].element.classList.remove('is-hovered');
+    hovered=i;items[i].element.classList.add('is-hovered');
+    hint.innerHTML='<span class="ar-hint-name"></span><span class="ar-hint-price">'+money(price)+'</span>';
+    hint.querySelector('.ar-hint-name').textContent=names[items[i].k];
+  }
+  function unhover(i){
+    if(hovered!==i)return;
+    items[i].element.classList.remove('is-hovered');hovered=-1;
+    hint.textContent=matchMedia('(hover: none)').matches?'Tap a piece · tap again to look closer':'Hover a piece · click to look closer';
+  }
+  function tickPositions(dt){
+    const offsetScale=gs/.48*u;
+    for(const item of items){
+      let space=0;
+      if(hovered>=0&&hovered!==item.i){
+        const distance=item.i-hovered;
+        space=Math.sign(distance)*[0,50,24,9,0][Math.min(4,Math.abs(distance))]*offsetScale;
+      }
+      item.offset+=(space-item.offset)*(reduced.matches?1:1-Math.pow(.84,dt));
+      const x=(start+item.i*gap)*u-cur+item.offset;
+      item.element.style.transform=`translate3d(${x}px,${railY(x)-3*u}px,0)`;
+      if(!reduced.matches){
+        const angleTarget=Math.max(-7,Math.min(7,-velocity*.22));
+        item.av+=(angleTarget-item.angle)*.05*dt;
+        item.av*=Math.pow(.88,dt);item.angle+=item.av*dt;
+        item.sway.style.transform=`rotate(${item.angle}deg)`;
+      }else item.sway.style.transform='none';
+    }
+    progress.style.left=((maxScroll?cur/maxScroll:0)*42)+'%';
+  }
+  function frame(now){
+    const dt=Math.min(3,(now-(lastTime||now))/16.667||1);lastTime=now;
+    const before=cur;
+    cur+=(target-cur)*(1-Math.pow(1-.085,dt));
+    if(Math.abs(cur-target)<.08)cur=target;
+    velocity=(cur-before)/dt;
+    if(width)tickPositions(dt);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  function launchIntro(){
+    if(reduced.matches)return;
+    items.forEach((item,i)=>{
+      item.drop.animate([
+        {transform:`translateY(${-42*u}px)`,opacity:0,filter:'blur(6px)'},
+        {transform:'translateY(0)',opacity:1,filter:'blur(0px)'}
+      ],{duration:620,delay:i*70,easing:'cubic-bezier(.2,.9,.3,1)',fill:'backwards'});
+      setTimeout(()=>{item.av+=(i%2?1:-1)*1.6},i*70+420);
+    });
+    $('.ar-heading').animate([{opacity:0,transform:'translateY(6px)',filter:'blur(10px)'},{opacity:1,transform:'translateY(0)',filter:'blur(0)'}],
+      {duration:780,easing:'cubic-bezier(.25,.8,.3,1)'});
+    $('.ar-footer').animate([{opacity:0},{opacity:1}],{duration:450,delay:580,fill:'backwards'});
+  }
+  // Never announce images as ready on a timer. The original images MUST decode.
+  Promise.all([sheets.side,sheets.front]).then(()=>refreshOriginalClothes());
+  window.addEventListener('resize',layout);
+  if(typeof ResizeObserver!=='undefined')new ResizeObserver(layout).observe(root);
+  layout();
+  hint.textContent=matchMedia('(hover: none)').matches?'Tap a piece · tap again to look closer':hint.textContent;
+
+  zone.addEventListener('wheel',e=>{
+    if(selectedIndex>=0||cartOpen)return;
+    const dominant=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;
+    if(!dominant||!maxScroll)return;
+    const next=Math.max(0,Math.min(maxScroll,target+dominant*.9));
+    // At the ends, regular website vertical scrolling remains available.
+    if(next===target&&!e.shiftKey&&Math.abs(e.deltaX)<Math.abs(e.deltaY))return;
+    e.preventDefault();target=next;
+  },{passive:false});
+  zone.addEventListener('pointerdown',e=>{
+    if(selectedIndex>=0||cartOpen||e.button>0)return;
+    drag={id:e.pointerId,x:e.clientX,y:e.clientY,startTarget:target,lastX:e.clientX,lastTime:performance.now(),speed:0,active:false};
+  });
+  window.addEventListener('pointermove',e=>{
+    if(!drag||drag.id!==e.pointerId)return;
+    const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+    if(!drag.active&&Math.abs(dx)>6&&Math.abs(dx)>Math.abs(dy)){
+      drag.active=true;zone.classList.add('is-grabbing');if(hovered>=0)unhover(hovered);
+    }
+    if(!drag.active)return;
+    const now=performance.now(),elapsed=Math.max(1,now-drag.lastTime);
+    drag.speed=(e.clientX-drag.lastX)/elapsed;
+    drag.lastX=e.clientX;drag.lastTime=now;
+    target=Math.max(0,Math.min(maxScroll,drag.startTarget-dx*1.15));
+    if(e.cancelable)e.preventDefault();
+  },{passive:false});
+  function endDrag(e){
+    if(!drag||drag.id!==e.pointerId)return;
+    if(drag.active){
+      target=Math.max(0,Math.min(maxScroll,target-drag.speed*260));
+      suppressClickUntil=performance.now()+250;
+      zone.classList.remove('is-grabbing');
+    }
+    drag=null;
+  }
+  window.addEventListener('pointerup',endDrag);window.addEventListener('pointercancel',endDrag);
+  zone.addEventListener('pointerleave',()=>{if(!drag&&hovered>=0)unhover(hovered)});
+
+  function sizeQuickView(){
+    if(selectedIndex<0)return;
+    const k=items[selectedIndex].k;
+    const art=$('.ar-qv-imagebox');
+    const isMobile=window.innerWidth<=820;
+    const bounds=art.getBoundingClientRect();
+    const maxH=Math.max(crops.front[k][1],crops.back[k][1])+6;
+    const scale=Math.min(isMobile?.46:.9,
+      (Math.max(150,bounds.height-(isMobile?50:80)))/maxH,
+      (Math.max(150,bounds.width-20))/340);
+    setCrop(qvFront,'front',k,scale);setCrop(qvBack,'back',k,scale);
+  }
+  function chooseView(view){
+    selectedView=view;
+    qvFront.classList.toggle('is-hidden',view!=='front');
+    qvBack.classList.toggle('is-hidden',view!=='back');
+    $$('.ar-tab').forEach(el=>el.setAttribute('aria-selected',String(el.dataset.view===view)));
+  }
+  function openQuickView(i){
+    if(selectedIndex>=0||addBusy)return;
+    lastFocus=document.activeElement;modalToken++;selectedIndex=i;selectedSize='S';
+    const k=items[i].k;
+    $('.ar-qv-counter').textContent=(i+1)+' / '+order.length;
+    $('.ar-qv-title').textContent=names[k];
+    $('.ar-qv-meta-name').textContent=names[k];
+    $$('.ar-size').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.size==='S')));
+    chooseView('front');
+    modal.hidden=false;root.classList.add('ar-qv-open');sizeQuickView();
+    closeQV.focus();
+    if(!reduced.matches){
+      const origin=items[i].element.getBoundingClientRect(),art=$('.ar-qv-imagebox').getBoundingClientRect();
+      const dx=(origin.left-art.left)*.38,dy=(origin.top-art.top)*.25;
+      $('.ar-qv-imagebox').animate([
+        {transform:`translate(${dx}px,${dy}px) scale(.83)`,opacity:.4},
+        {transform:'translate(0,0) scale(1)',opacity:1}
+      ],{duration:700,easing:'cubic-bezier(.22,1,.36,1)'});
+      $('.ar-qv-info').animate([{transform:'translateY(10px)',opacity:0},{transform:'translateY(0)',opacity:1}],
+        {duration:600,delay:240,easing:'ease-out',fill:'backwards'});
+    }
+  }
+  function closeQuickView(fast=false){
+    if(selectedIndex<0)return;
+    const token=++modalToken;
+    const old=selectedIndex;
+    selectedIndex=-1;root.classList.remove('ar-qv-open');
+    const finish=()=>{if(token!==modalToken)return;modal.hidden=true;items[old].element.style.visibility='';if(lastFocus?.isConnected)lastFocus.focus({preventScroll:true})};
+    if(fast||reduced.matches)finish();
+    else{
+      const anim=$('.ar-qv-imagebox').animate([{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(.82)'}],
+        {duration:340,easing:'cubic-bezier(.55,0,.2,1)'});
+      anim.finished.then(finish).catch(finish);
+    }
+  }
+  closeQV.addEventListener('click',()=>closeQuickView());
+  $$('.ar-tab').forEach(el=>el.addEventListener('click',async()=>{
+    const view=el.dataset.view;
+    if(view==='back')await sheets.back;
+    if(view==='back'&&!assetReady.back){
+      assetStatus.hidden=false;assetInputs.hidden=false;
+      assetMessage.textContent='Back-view original image is not available. Upload the original back.png sheet.';
+      return;
+    }
+    if(selectedIndex>=0)chooseView(view);
+  }));
+  $$('.ar-size').forEach(el=>el.addEventListener('click',()=>{
+    selectedSize=el.dataset.size;
+    $$('.ar-size').forEach(b=>b.setAttribute('aria-pressed',String(b===el)));
+  }));
+
+  function createFlyClone(face){
+    const rect=face.getBoundingClientRect();
+    const clone=face.cloneNode(false);clone.className='ar-face ar-fly';
+    clone.style.top=rect.top+'px';clone.style.left=rect.left+'px';
+    clone.style.width=rect.width+'px';clone.style.height=rect.height+'px';
+    clone.style.transform='none';clone.style.opacity='1';clone.style.visibility='visible';clone.style.transition='none';
+    document.body.appendChild(clone);return {clone,rect};
+  }
+  function animateIntoBag(face){
+    const {clone,rect}=createFlyClone(face),b=bag.getBoundingClientRect();
+    const deltaX=b.left+b.width/2-(rect.left+rect.width/2);
+    const deltaY=b.top+b.height/2-(rect.top+rect.height/2);
+    const end=Math.max(.04,b.height*1.6/Math.max(1,rect.height));
+    const animations=[
+      {transform:'translate(0px,0px) scale(1)',opacity:1},
+      {transform:`translate(${deltaX*.45}px,${deltaY*.45-90*u}px) scale(${(1+end)*.42})`,opacity:.9,offset:.45},
+      {transform:`translate(${deltaX}px,${deltaY}px) scale(${end})`,opacity:.35}
+    ];
+    if(reduced.matches){clone.remove();return Promise.resolve()}
+    const anim=clone.animate(animations,{duration:820,easing:'cubic-bezier(.55,.05,.35,1)',fill:'forwards'});
+    return anim.finished.catch(()=>{}).then(()=>clone.remove());
+  }
+  addBtn.addEventListener('click',async()=>{
+    if(selectedIndex<0||addBusy)return;
+    addBusy=true;
+    const i=selectedIndex,k=items[i].k,size=selectedSize;
+    addBtn.classList.add('is-loading');
+    addBtn.innerHTML='<span class="ar-spinner" aria-hidden="true"></span>Adding…';
+    if(!reduced.matches)await new Promise(r=>setTimeout(r,1000));
+    const face=selectedView==='back'?qvBack:qvFront;
+    const fly=animateIntoBag(face);
+    closeQuickView(true);
+    if(!reduced.matches){
+      items[i].drop.animate([{transform:`translateY(${-24*u}px)`,opacity:0},{transform:'translateY(0)',opacity:1}],
+        {duration:520,delay:260,easing:'ease-out'});
+      items[i].av+=1.4;
+    }
+    await fly;
+    cart.unshift({k,size,qty:1});renderCart();
+    if(!reduced.matches){
+      badge.animate([{transform:'scale(1)'},{transform:'scale(1.45)'},{transform:'scale(1)'}],{duration:500,easing:'cubic-bezier(.3,1.6,.5,1)'});
+      bag.animate([{transform:'scale(1)'},{transform:'scale(1.22) rotate(-6deg)'},{transform:'scale(.94)'},{transform:'scale(1)'}],{duration:520,easing:'ease-out'});
+    }
+    addBtn.textContent='Add to cart';addBtn.classList.remove('is-loading');addBusy=false;
+  });
+
+  function renderCart(){
+    const totalQty=cart.reduce((sum,item)=>sum+item.qty,0);
+    badge.textContent=String(totalQty);cartCount.textContent=String(totalQty);
+    cartAmount.textContent=money(cart.reduce((sum,item)=>sum+price*item.qty,0));
+    cartList.replaceChildren();
+    if(!cart.length){const p=document.createElement('p');p.className='ar-cart-empty';p.textContent='Your cart is empty.';cartList.appendChild(p)}
+    for(let index=0;index<cart.length;index++){
+      const item=cart[index],el=document.createElement('div');el.className='ar-cart-row';
+      const thumb=document.createElement('div');thumb.className='ar-cart-thumb';
+      const crop=document.createElement('div');crop.className='ar-cart-thumb-face';
+      const scale=Math.min(70/340,88/(crops.front[item.k][1]+6));setCrop(crop,'front',item.k,scale);thumb.append(crop);
+      const center=document.createElement('div');
+      const name=document.createElement('div');name.className='ar-cart-name';name.textContent=names[item.k];
+      const detail=document.createElement('div');detail.className='ar-cart-detail';detail.textContent='Size: '+item.size+' · '+money(price);
+      const qty=document.createElement('div');qty.className='ar-quantity';
+      for(const [label,delta] of [['−',-1],['+',1]]){
+        if(delta===1){const span=document.createElement('span');span.textContent=String(item.qty);qty.appendChild(span)}
+        const b=document.createElement('button');b.type='button';b.textContent=label;
+        b.setAttribute('aria-label',(delta===1?'Increase':'Decrease')+' quantity of '+names[item.k]);
+        b.addEventListener('click',()=>{item.qty+=delta;if(item.qty<=0)cart.splice(index,1);renderCart()});
+        if(delta===-1)qty.prepend(b);else qty.append(b);
+      }
+      const remove=document.createElement('button');remove.className='ar-remove';remove.type='button';remove.textContent='Remove';
+      remove.setAttribute('aria-label','Remove '+names[item.k]);remove.addEventListener('click',()=>{cart.splice(index,1);renderCart()});
+      center.append(name,detail,qty,remove);
+      const line=document.createElement('div');line.className='ar-cart-total-line';line.textContent=money(price*item.qty);
+      el.append(thumb,center,line);cartList.append(el);
+    }
+    $('.ar-checkout').disabled=!CHECKOUT_URL||!cart.length;
+  }
+  function openCart(){
+    if(selectedIndex>=0)closeQuickView(true);
+    lastFocus=document.activeElement;
+    cartOpen=true;drawer.setAttribute('aria-hidden','false');root.classList.add('ar-cart-open');
+    scrim.hidden=false;requestAnimationFrame(()=>scrim.classList.add('is-visible'));
+    bag.setAttribute('aria-expanded','true');$('.ar-drawer-close').focus();
+  }
+  function closeCart(){
+    if(!cartOpen)return;cartOpen=false;drawer.setAttribute('aria-hidden','true');root.classList.remove('ar-cart-open');
+    bag.setAttribute('aria-expanded','false');scrim.classList.remove('is-visible');
+    setTimeout(()=>{if(!cartOpen)scrim.hidden=true},300);
+    bag.focus({preventScroll:true});
+  }
+  bag.addEventListener('click',()=>cartOpen?closeCart():openCart());
+  $('.ar-drawer-close').addEventListener('click',closeCart);
+  scrim.addEventListener('click',closeCart);
+  $('.ar-checkout').addEventListener('click',()=>{if(CHECKOUT_URL&&cart.length)location.href=CHECKOUT_URL});
+  window.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){
+      if(selectedIndex>=0){e.preventDefault();closeQuickView()}
+      else if(cartOpen){e.preventDefault();closeCart()}
+    }
+    if(selectedIndex<0&&!cartOpen&&root.contains(document.activeElement)&&['ArrowLeft','ArrowRight'].includes(e.key)){
+      e.preventDefault();target=Math.max(0,Math.min(maxScroll,target+(e.key==='ArrowRight'?1:-1)*gap*u));
+    }
+    if((selectedIndex>=0||cartOpen)&&e.key==='Tab'){
+      const dialog=selectedIndex>=0?modal:drawer;
+      const focusables=Array.from(dialog.querySelectorAll('button:not([disabled])'));
+      if(!focusables.length)return;
+      const first=focusables[0],last=focusables[focusables.length-1];
+      if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
+      else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+    }
+  });
+  renderCart();
+})();
+</script>
+</body></html>
